@@ -13,11 +13,11 @@ class BlogSpider(scrapy.Spider):
             print("HREF ",entry.xpath('//a[@data-search-resultitem=""]/@href').extract())
 
             yield {
-                'id': entry.css('id ::text').extract_first(),
-                'href': entry.xpath('//a[@data-search-resultitem=""]/@href').extract_first(),
+                #'id': entry.css('id ::text').extract_first(),
+                #'href': entry.xpath('//a[@data-search-resultitem=""]/@href').extract_first(),
                 #'location': entry.xpath('//a[@data-search-resultitem=""]/@href').extract_first(),
-                'price': entry.css('a ::text').extract_first(),
-                'square_meter': entry.css('a ::text').extract_first(),
+                #'price': entry.css('a ::text').extract_first(),
+                #'square_meter': entry.css('a ::text').extract_first(),
                 }
 
         for next_page in response.css("//a[contains(.//text(), 'next')]"):
