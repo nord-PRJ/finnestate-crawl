@@ -8,3 +8,39 @@ in order to avoid version error, run:
 pip install git+https://github.com/scrapy/scrapy@master --no-dependencies --upgrade
 ```
 
+## Running the spiders
+in order to run the spiders you must run:
+```
+scrapy crawl <spidername>
+```
+### Spiders
+- finnspider: crawls through Finn.no and grabs all house adds from finn
+```
+scrapy crawl finnspider
+```
+
+### Outputs
+You can output the scrape results to a file
+- json lines
+```
+scrapy crawl <spidername> -o <filename>.jl
+```
+- json
+```
+scrapy crawl <spidername> -o <filename>.json
+```
+- csv
+```
+scrapy crawl <spidername> -o <filename>.csv
+```
+
+## Scrapy shell
+1. To test selectors use:
+```
+srapy shell `www.website.com`
+```
+2. Then try your selector: 
+```
+>>> response.css('title::text').extract()
+```
+## Data model
