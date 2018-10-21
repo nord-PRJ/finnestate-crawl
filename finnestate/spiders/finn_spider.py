@@ -2,8 +2,6 @@ import scrapy
 
 
 # scrapy runspider finn_spider.py
-
-
 class FinnSpider(scrapy.Spider):
     name = 'finnhomes_toplayer'
     start_urls = ['https://www.finn.no/realestate/homes/search.html?filters=']
@@ -19,17 +17,16 @@ class FinnSpider(scrapy.Spider):
             yield {
                 #'id': entry.xpath('//a/@data-finnkode').extract_first(),
                 'real_estate_firm': entry.css('li.truncate ::text').extract_first(),
-                #'building_type': entry.xpath('//a/@data-finnkode').extract_first(),
                 #'href': entry.xpath('//a[@data-search-resultitem=""]/@href').extract_first(),
                 #'img_href': entry.xpath('//img[@src=""]/@href').extract_first(),
-                #'location': entry.xpath('//a[@data-search-resultitem=""]/@href').extract_first(),
                 'location': entry.css('div.valign-middle ::text').extract_first(),
                 'square_meter': entry.css('span.prm ::text').extract_first(), #square meter is the first span
-                #'price': entry.css('span.prm ::text').extract[1], #price is secon span
-                'owner': entry.css('li[data-automation-id="bottomRow2"] ::text').extract_first(),
+                'price': entry.css('span.prm:last-child ::text').extract()[0], #price is secon span
+                'owner': entry.css('li[data-automation-id="bottomRow2"] ::text').extract_first().split(u' \u2022 ')[0],
+                'building_type': entry.css('li[data-automation-id="bottomRow2"] ::text').extract_first().split(u' \u2022 ')[1],
+                'rooms': entry.css('li[data-automation-id="bottomRow2"] ::text').extract_first().split(u' \u2022 ')[2],
                 'add_title': entry.css('h3.result-item-heading ::text').extract_first(),
                 }
-        #.partition('• ')[0],
 
         #for next_page in response.css("//a[contains(.//text(), 'next')]"):
         #    yield response.follow(next_page, self.parse)

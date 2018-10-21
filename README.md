@@ -14,9 +14,9 @@ in order to run the spiders you must run:
 scrapy crawl <spidername>
 ```
 ### Spiders
-- finnspider: crawls through Finn.no and grabs all house adds from finn
+- finnhomes-toplayer: crawls through Finn.no and grabs all house adds from finn
 ```
-scrapy crawl finnspider
+scrapy crawl finnhomes-toplayer
 ```
 
 ### Outputs
