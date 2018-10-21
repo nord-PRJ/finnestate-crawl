@@ -6,8 +6,16 @@ class FinnSpider(scrapy.Spider):
     name = 'finnhomes_top_layer'
     start_urls = ['https://www.finn.no/realestate/homes/search.html?filters=']
     base_url = "https://www.finn.no"
-    pages_parsed = 0
+    pages_parsed = 1
     entries = 0
+
+    def null_catch(self, function):
+        try:
+            value = function
+            return value
+        except:
+            return None
+
     def parse(self, response):
         main_section = response.css('.main-section')
         result_hit_count = response.xpath('//div[@role="main"]/@data-result-hit-count').extract_first()
@@ -30,7 +38,7 @@ class FinnSpider(scrapy.Spider):
                 #'building_type': entry.css('li[data-automation-id="bottomRow2"] ::text').extract_first().split(u' \u2022 ')[1],
                 #'rooms': entry.css('li[data-automation-id="bottomRow2"] ::text').extract_first().split(u' \u2022 ')[2],
                 'ad_title': entry.css('h3.result-item-heading ::text').extract_first(),
-                #'common_debt': entry.css('li.hide-lt768 ::text').extract_first().split(u' \u2022 ')[0],
+                'common_debt': self.null_catch(entry.css('li.hide-lt768 ::text').extract_first().split(u' \u2022 ')[0]),
                 #'common_expenses': entry.css('li.hide-lt768 ::text').extract_first().split(u' \u2022 ')[1],
                 }
         
