@@ -6,12 +6,16 @@ class FinnSpider(scrapy.Spider):
     name = 'finnhomes_top_layer'
     start_urls = ['https://www.finn.no/realestate/homes/search.html?filters=']
     base_url = "https://www.finn.no"
-
+    pages_parsed = 0
+    entries = 0
     def parse(self, response):
         main_section = response.css('.main-section')
         result_hit_count = response.xpath('//div[@role="main"]/@data-result-hit-count').extract_first()
         print("result hit count: "+result_hit_count)
+        print("Page: "+str(self.pages_parsed))
         for i , entry in enumerate(main_section.css('.result-item')):
+            self.entries += 1
+            print("Entry Number: "+str(self.entries))
             if entry.css('span.mrs ::text').extract_first():
                 continue # ignore weekly ad med ukens bolig
             yield {
@@ -23,15 +27,18 @@ class FinnSpider(scrapy.Spider):
                 'square_meter': entry.css('span.prm ::text').extract_first(), #square meter is the first span
                 'price': entry.css('span.prm:last-child ::text').extract()[0], #price is secon span
                 'owner': entry.css('li[data-automation-id="bottomRow2"] ::text').extract_first().split(u' \u2022 ')[0],
-                'building_type': entry.css('li[data-automation-id="bottomRow2"] ::text').extract_first().split(u' \u2022 ')[1],
-                'rooms': entry.css('li[data-automation-id="bottomRow2"] ::text').extract_first().split(u' \u2022 ')[2],
+                #'building_type': entry.css('li[data-automation-id="bottomRow2"] ::text').extract_first().split(u' \u2022 ')[1],
+                #'rooms': entry.css('li[data-automation-id="bottomRow2"] ::text').extract_first().split(u' \u2022 ')[2],
                 'ad_title': entry.css('h3.result-item-heading ::text').extract_first(),
+                #'common_debt': entry.css('li.hide-lt768 ::text').extract_first().split(u' \u2022 ')[0],
+                #'common_expenses': entry.css('li.hide-lt768 ::text').extract_first().split(u' \u2022 ')[1],
                 }
+        
+        for next_page in response.css("a.pam").xpath('@href'):
+            yield response.follow(next_page, self.parse)
 
-        #for next_page in response.css("//a[contains(.//text(), 'next')]"):
-        #    yield response.follow(next_page, self.parse)
-
-        #next_page = response.css('li.next a::attr(href)').extract_first()
-        #if next_page is not None:
-        #    next_page = response.urljoin(next_page)
-        #    yield scrapy.Request(next_page, callback=self.parse)
+        next_page = response.css('li.next a::attr(href)').extract_first()
+        if next_page is not None:
+            self.pages_parsed += 1
+            next_page = response.urljoin(next_page)
+            yield scrapy.Request(next_page, callback=self.parse)
