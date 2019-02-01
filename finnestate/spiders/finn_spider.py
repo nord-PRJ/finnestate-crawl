@@ -10,13 +10,13 @@ class FinnSpider(scrapy.Spider):
     entries = 0
 
     def parse(self, response):
-        main_section = response.css('.main-section')
+        main_section = response.css('.ads')
         result_hit_count = response.xpath('//div[@role="main"]/@data-result-hit-count').extract_first()
 
         print("result hit count: "+result_hit_count)
         print("Page: "+ str(self.pages_parsed))
 
-        for i , entry in enumerate(main_section.css('.result-item')):
+        for i , entry in enumerate(main_section.css('.ads__unit')):
             self.entries += 1
             print("Entry Number: "+ str(self.entries))
 
